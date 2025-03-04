@@ -1,6 +1,7 @@
 // Importando a biblioteca do framework Express
 import express from "express"
 import conectaNaDataBase from "./config/dbConnect.js"
+import livro from "./models/Livro.js"
 
 const conexao = await conectaNaDataBase()
 
@@ -16,32 +17,15 @@ const app = express()
 // Permitir a "tradução" de String para json e vice-versa
 app.use(express.json())
 
-const livros = [
-    {
-        id: 1,
-        titulo: "O Senhor dos Anéis"
-    },
-    {
-        id: 2,
-        titulo: "O Hobbit"
-    }
-]
-
-// ---------------- Funções ----------------
-function buscaLivro(id) {
-    return livros.findIndex(livro => {
-        return livro.id === Number(id)
-    })
-}
-
 // ---------------- GET ----------------
 
 app.get("/", (req, res) => {
     res.status(200).send("Curso de Node.js")
 })
 
-app.get("/livros", (req, res) => {
-    res.status(200).json(livros)
+app.get("/livros", async (req, res) => {
+    const listaLivros = await livro.find({})
+    res.status(200).json(listaLivros)
 })
 
 app.get("/livros/:id", (req, res) => {
@@ -73,5 +57,3 @@ app.delete("/livros/:id", (req, res) => {
 })
 
 export default app
-
-// 
