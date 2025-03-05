@@ -1,7 +1,7 @@
 // Importando a biblioteca do framework Express
 import express from "express"
 import conectaNaDataBase from "./config/dbConnect.js"
-import livro from "./models/Livro.js"
+import routes from "./routes/index.js"
 
 const conexao = await conectaNaDataBase()
 
@@ -14,14 +14,9 @@ conexao.once("open", () => {
 })
 
 const app = express()
-// Permitir a "tradução" de String para json e vice-versa
-app.use(express.json())
+routes(app)
 
 // ---------------- GET ----------------
-
-app.get("/", (req, res) => {
-    res.status(200).send("Curso de Node.js")
-})
 
 app.get("/livros/:id", (req, res) => {
     const index = buscaLivro(req.params.id)
