@@ -5,7 +5,7 @@ import routes from "./routes/index.js"
 
 const conexao = await conectaNaDataBase()
 
-conexao.on("error", (error) => {
+conexao.on("error", (erro) => {
     console.error("Erro de conexão", erro)
 })
 
