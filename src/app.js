@@ -2,6 +2,7 @@
 import express from "express"
 import conectaNaDataBase from "./config/dbConnect.js"
 import routes from "./routes/index.js"
+import manipuladorDeErros from "./middlewares/manipuladorDeErros.js"
 
 const conexao = await conectaNaDataBase()
 
@@ -16,12 +17,6 @@ conexao.once("open", () => {
 const app = express()
 routes(app)
 
-// ---------------- DELETE ----------------
-
-app.delete("/livros/:id", (req, res) => {
-    const index = buscaLivro(req.params.id)
-    livros.splice(index, 1)
-    res.status(200).send("Livro removido com sucesso")
-})
+app.use(manipuladorDeErros)
 
 export default app
