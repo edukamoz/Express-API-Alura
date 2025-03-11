@@ -14,11 +14,19 @@ class LivroController {
 
     static async listarLivroPorId(req, res, next) {
         try {
-            const id = req.params.id
-            const livroEncontrado = await livro.findById(id)
-            res.status(200).json(livroEncontrado)
+            const id = req.params.id;
+
+            const livroResultado = await livro.findById(id)
+                .populate("autor", "nome")
+                .exec();
+
+            if (livroResultado !== null) {
+                res.status(200).send(livroResultado);
+            } else {
+                next(new NaoEncontrado("Id do livro não localizado."));
+            }
         } catch (erro) {
-            next(erro)
+            next(erro);
         }
     }
 
@@ -39,21 +47,33 @@ class LivroController {
 
     static async atualizarLivro(req, res, next) {
         try {
-            const id = req.params.id
-            await livro.findByIdAndUpdate(id, req.body)
-            res.status(200).json({ message: "Livro atualizado" })
+            const id = req.params.id;
+
+            const livroResultado = await livro.findByIdAndUpdate(id, { $set: req.body });
+
+            if (livroResultado !== null) {
+                res.status(200).send({ message: "Livro atualizado com sucesso" });
+            } else {
+                next(new NaoEncontrado("Id do livro não localizado."));
+            }
         } catch (erro) {
-            next(erro)
+            next(erro);
         }
     }
 
     static async excluirLivro(req, res, next) {
         try {
-            const id = req.params.id
-            await livro.findByIdAndDelete(id)
-            res.status(200).json({ message: "Livro excluído com sucesso" })
+            const id = req.params.id;
+
+            const livroResultado = await livro.findByIdAndDelete(id);
+
+            if (livroResultado !== null) {
+                res.status(200).send({ message: "Livro removido com sucesso" });
+            } else {
+                next(new NaoEncontrado("Id do livro não localizado."));
+            }
         } catch (erro) {
-            next(erro)
+            next(erro);
         }
     }
 
