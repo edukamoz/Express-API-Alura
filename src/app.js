@@ -1,25 +1,21 @@
-// Importando a biblioteca do framework Express
-import express from "express"
-import conectaNaDataBase from "./config/dbConnect.js"
-import routes from "./routes/index.js"
-import manipuladorDeErros from "./middlewares/manipuladorDeErros.js"
-import manipulador404 from "./middlewares/manipulador404.js"
+import express from "express";
+import db from "./config/dbConnect.js";
+import manipulador404 from "./middlewares/manipulador404.js";
+import manipuladorDeErros from "./middlewares/manipuladorDeErros.js";
+import routes from "./routes/index.js";
 
-const conexao = await conectaNaDataBase()
+db.on("error", console.log.bind(console, "Erro de conexão"));
+db.once("open", () => {
+    console.log("conexão com o banco feita com sucesso");
+});
 
-conexao.on("error", (erro) => {
-    console.error("Erro de conexão", erro)
-})
+const app = express();
+app.use(express.json());
+routes(app);
 
-conexao.once("open", () => {
-    console.log("Conexão com o banco feita com sucesso")
-})
+app.use(manipulador404);
 
-const app = express()
-routes(app)
+// eslint-disable-next-line no-unused-vars
+app.use(manipuladorDeErros);
 
-app.use(manipulador404)
-
-app.use(manipuladorDeErros)
-
-export default app
+export default app;
